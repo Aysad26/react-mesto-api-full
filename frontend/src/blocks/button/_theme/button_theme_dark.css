@@ -1,0 +1,23 @@
+.button_theme_dark {
+  background: #ffffff;
+  padding-top: 14px;
+  padding-bottom: 18px;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #000000;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.button_theme_dark:hover {
+  opacity: 0.85;
+}
+
+@media screen and (max-width: 767px) {
+  .button_theme_dark {
+    margin-bottom: 20px;
+  }
+}
+

@@ -1,0 +1,10 @@
+.App {
+  text-align: center;
+  background-color: black;
+}
+
+body {
+  /* остальные стандартные свойства Create React App */
+background-color: #000000;
+} 
+

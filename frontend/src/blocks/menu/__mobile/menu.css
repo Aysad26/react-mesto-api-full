@@ -1,0 +1,14 @@
+.menu__mobile {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 142px;
+  border-bottom: 1px solid rgba(84, 84, 84, 0.7);
+}
+
+@media screen and (max-width: 907px) {
+  .menu__mobile {
+    display: flex;
+  }
+}

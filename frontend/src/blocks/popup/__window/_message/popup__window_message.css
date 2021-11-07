@@ -1,0 +1,19 @@
+.popup__window_message {
+  padding-top: 60px;
+  padding-left: 36px;
+  padding-right: 36px;
+  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 767px) {
+  .popup__window_message {
+    padding-top:25px;
+    padding-left: 22px;
+    padding-right: 22px;
+    padding-bottom: 25px;
+  }
+}

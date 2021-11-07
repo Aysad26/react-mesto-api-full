@@ -1,0 +1,16 @@
+.form-section {
+  width: 358px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: -20px auto 0 auto;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 767px) {
+  .form-section {
+    width: 260px;
+  }
+}

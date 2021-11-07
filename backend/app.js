@@ -20,8 +20,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use(requestLogger);
-
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -42,8 +40,6 @@ app.post('/signup', celebrate({
 app.use(auth);
 app.use('/', routerUsers);
 app.use('/', routerCards);
-
-app.use(errorLogger);
 
 app.use(() => {
   throw new NotFoundError('Введён несуществующий адрес');

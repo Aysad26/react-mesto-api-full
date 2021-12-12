@@ -14,7 +14,10 @@ export class Api {
   getCards() {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'GET',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
     })
     .then(this._getResponseData)
   }
@@ -22,7 +25,10 @@ export class Api {
   getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'GET',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
     })
     .then(this._getResponseData)
   }
@@ -30,7 +36,10 @@ export class Api {
   changeUserInfo(data) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
       body: JSON.stringify(data),
     })
     .then(this._getResponseData)
@@ -40,7 +49,10 @@ export class Api {
     return fetch(`${this._baseUrl}/users/me/avatar`,
       {
         method: "PATCH",
-        headers: this._headers,
+        headers: {
+          ...this._headers,
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
         body: JSON.stringify({
           avatar: url
         })
@@ -51,7 +63,10 @@ export class Api {
   addCard({name, link}) {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'POST',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
       body: JSON.stringify({ 
         name: name, 
         link: link 
@@ -63,7 +78,10 @@ export class Api {
   deleteCard(data) {
     return fetch(`${this._baseUrl}/cards/${data}`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
     })
     .then(this._getResponseData)
   }
@@ -71,7 +89,10 @@ export class Api {
   setLike(card) {
     return fetch(`${this._baseUrl}/cards/likes/${card}`, {
       method: 'PUT',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
     })
     .then(this._getResponseData)
   }
@@ -79,7 +100,10 @@ export class Api {
   deleteLike(card) {
     return fetch(`${this._baseUrl}/cards/likes/${card}`, {
       method: 'DELETE',
-      headers: this._headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
     })
     .then(this._getResponseData)
   }

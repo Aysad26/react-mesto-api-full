@@ -1,0 +1,11 @@
+@import url('./__logo/header__logo.css');
+@import url('./__link/header__link.css');
+@import url('./__button-logout/header__button-logout.css');
+@import url('./__email/header__email.css');
+@import url('./__section/header__section.css');
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}

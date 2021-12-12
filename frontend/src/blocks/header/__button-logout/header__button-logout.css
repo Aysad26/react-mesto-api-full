@@ -1,0 +1,13 @@
+.header__button-logout {
+    font-size: 18px;
+    line-height: 22px;
+    text-align: right;
+    color: #A9A9A9;
+    text-decoration: none;
+    transition: opacity 0.2s ease-in;
+    margin-left: 24px;
+}
+
+.header__button-logout:hover {
+    opacity: 0.85;
+}

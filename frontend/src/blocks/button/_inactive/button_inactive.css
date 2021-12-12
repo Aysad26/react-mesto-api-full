@@ -1,0 +1,17 @@
+.button_inactive {
+  opacity: 0.2;
+  border: 1px solid black;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  color: black;
+}
+
+.button_inactive:hover {
+  opacity: 0.2;
+  border: 1px solid black;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  color: black;
+}

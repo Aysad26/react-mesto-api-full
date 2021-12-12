@@ -1,0 +1,9 @@
+.modal__input-error {
+    transition: 0.3s;
+    opacity: 0;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 15px;
+    color: #FF0000;
+    width: 100%;
+}

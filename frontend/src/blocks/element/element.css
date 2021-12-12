@@ -1,0 +1,17 @@
+@import url('./__image/element__image.css');
+@import url('./__title/element__title.css');
+@import url('./__description/element__description.css');
+@import url('./__like-button/element__like-button.css');
+@import url('./__delete-button/element__delete-button.css');
+@import url('./__like-interaction/element__like-interaction.css');
+@import url('./__like-counter/element__like-counter.css');
+@import url('./__delete-button/_hidden/element__delete-button_hidden.css');
+@import url('./__delete-button/_visible/element__delete-button_visible.css');
+.element {
+    max-width: 282px;
+    height: 361px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}

@@ -1,0 +1,11 @@
+.form__input-error_active {
+  opacity: 1;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FF0000;
+  position: absolute;
+  top: 33px;
+  left: 0;
+  z-index: 1;
+}

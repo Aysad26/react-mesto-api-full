@@ -1,0 +1,28 @@
+.menu__item {
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: right;
+  color: #FFFFFF;
+  opacity: 1;
+  transition: opacity 0.2s ease-in;
+  margin-right: 24px;
+}
+
+.menu__item:last-child {
+  margin-right: 0;
+}
+
+.menu__item:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 907px) {
+  .menu__item {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
+

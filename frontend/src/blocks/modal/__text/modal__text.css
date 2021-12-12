@@ -1,0 +1,24 @@
+.modal__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 14px 0;
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 17px;
+    color: #000;
+    outline: none;
+}
+
+
+@media screen and (max-width: 425px) {
+    .modal__text {
+        padding: 0 0 12px 0;
+        font-size: 12px;
+        line-height: 15px;
+    }
+}

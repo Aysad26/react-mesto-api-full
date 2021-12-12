@@ -1,0 +1,19 @@
+.modal__input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.modal__input:last-of-type {
+    margin: 0;
+}
+
+@media screen and (max-width: 425px) {
+    .modal__input {
+        margin-bottom: 20px;
+    }
+}

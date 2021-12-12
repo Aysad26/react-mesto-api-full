@@ -1,0 +1,21 @@
+.popup__window {
+  position: relative;
+  min-width: 430px;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 36px;
+  padding-left: 36px;
+  padding-right: 36px;
+  padding-bottom: 37px;
+  align-items: center;
+}
+
+@media screen and (max-width: 767px) {
+  .popup__window {
+    min-width: 100%;
+  }
+}

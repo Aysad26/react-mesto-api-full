@@ -1,0 +1,4 @@
+.element__like-interaction {
+    display: flex;
+    flex-direction: column;
+}

@@ -3,7 +3,7 @@ const ALLOWED_CORS = [
   'https://praktikum.tk',
   'http://praktikum.tk',
   'http://localhost:3000',
-  'https://mesto.aysad26.nomoredomains.rocks',
+  'http://mesto.aysad26.nomoredomains.rocks',
   'http://mesto.aysad26.nomoredomains.rocks',
 ];
 

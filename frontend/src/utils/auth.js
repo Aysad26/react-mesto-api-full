@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.mesto.aysad26.nomoredomains.rocks'
+const BASE_URL = 'http://api.mesto.aysad26.nomoredomains.rocks'
 
 const handleResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка - ${res.status} - ${res.statusText}`)
   

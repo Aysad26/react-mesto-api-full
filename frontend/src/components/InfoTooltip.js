@@ -1,20 +1,16 @@
-import React from "react";
+import React from 'react'
+import PopupWithoutForm from './PopupWithoutForm'
 
-function InfoTooltip({ onClose, isOpen, image, message }) {
+const InfoTooltip = ({message, ...rest}) => {
   return (
-    <section className={`modal modal_tooltip ${isOpen && "modal_opened"}`}>
-      <div className="modal__container">
-        <img className="modal__tooltip" src={image} alt="Статус" />
-        <h2 className="modal__tooltip-message">{message}</h2>
-        <button
-          className="modal__close-button"
-          type="button"
-          aria-label="Закрыть"
-          onClick={onClose}
-        ></button>
-      </div>
-    </section>
-  );
+    <PopupWithoutForm
+      name = {'auth'}
+      {...rest}
+    >
+      <img src={message.image} alt="Статус авторизации" className="popup__tooltip-image" />
+      <p className="popup__tooltip-text">{message.text}</p>
+    </PopupWithoutForm>    
+  )
 }
 
-export default InfoTooltip;
+export default InfoTooltip

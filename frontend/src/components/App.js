@@ -1,337 +1,277 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route, Redirect, useHistory } from "react-router-dom";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import ModalImage from "./ModalImage";
-import { api } from "../utils/Api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import EditProfileModal from "./EditProfileModal";
-import EditAvatarModal from "./EditAvatarModal";
-import AddPlaceModal from "./AddPlaceModal";
-import ModalWithDelete from "./ModalWithDelete";
-import Login from "./Login";
-import Register from "./Register";
-import InfoTooltip from "./InfoTooltip";
-import * as auth from "../utils/auth";
-import ProtectedRoute from "./ProtectedRoute";
-import authSuccess from "../images/success.png";
-import authFail from "../images/fail.png";
+import Header from './Header'
+import Main from './Main'
+import Footer from './Footer'
+import ImagePopup from './ImagePopup'
+import React from 'react'
+import api from '../utils/api'
+import * as auth from '../utils/auth'
+import {CurrentUserContext} from '../contexts/CurrentUserContext'
+import EditProfilePopup from './EditProfilePopup'
+import EditAvatarPopup from './EditAvatarPopup'
+import AddPlacePopup from './AddPlacePopup'
+import ConfirmationPopup from './ConfirmationPopup'
+import Login from './Login'
+import Register from './Register'
+import ProtectedRoute from './ProtectedRoute'
+import InfoTooltip from './InfoTooltip'
+import { Route, Switch, useHistory } from 'react-router-dom'
+import accept from '../images/accepted.png'
+import decline from '../images/declined.png'
 
-function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isEditProfileModalOpen, setEditProfile] = useState(false);
-  const [isEditAvatarModalOpen, setEditAvatar] = useState(false);
-  const [isAddPlaceModalOpen, setAddCard] = useState(false);
-  const [deletedCard, setDeletedCard] = useState(null);
-  const [isModalWithDeleteOpen, setModalWithDelete] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [isModalImageOpen, setModalImage] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
-  const [cards, setCards] = useState([]);
+const App = () => {
+  const [currentUser, setCurrentUser] = React.useState({})
+  const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false)
+  const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false)
+  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false)
+  const [isConfirmationPopupOpen, setConfirmationPopupOpen] = React.useState(false)
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(false)
+  const [selectedCard, setSelectedCard] = React.useState({})
+  const [cardToDelete, setCardToDelete] = React.useState({})
+  const [cards, setCards] = React.useState([])
+  const [email, setEmail] = React.useState('')
+  const [loggedIn, setLoggedIn] = React.useState(false)
+  const [message, setMessage] = React.useState({
+    text: '',
+    image: ''
+  })
+  const history = useHistory()
 
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-  const [tooltipImage, setTooltipImage] = useState("");
-  const [message, setMessage] = useState("");
-  const history = useHistory();
+  React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt')
+    if (!jwt) { return }
 
-  useEffect(() => {
-    tokenCheck();
-  });
-
-  function tokenCheck() {
-    const token = localStorage.getItem("token");
-    if (token) {
-      auth
-        .checkToken(token)
-        .then((res) => {
-          if (res.email) {
-            setEmail(res.email);
-            setLoggedIn(true);
-            history.push("/");
+    if (jwt) {
+      auth.checkToken(jwt)
+        .then(res => {
+          if(res) {
+            setLoggedIn(true)
+            setEmail(res.email)
+            history.push('/')
           }
         })
-        .catch((err) => {
-          if (err === 400)
-            return console.log("Токен не передан или передан не в том формате");
-          if (err === 401) return console.log("Переданный токен некорректен");
-        });
+        .catch(err => {
+          console.log(`Ошибка - ${err}`)
+        })
     }
-  }
+    return;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn])
 
-  function onRegister(email, password) {
-    auth
-      .register(email, password)
-      .then((res) => {
-        if (res.email) {
-          setIsInfoTooltipOpen(true);
-          setTooltipImage(authSuccess);
-          setLoggedIn(true);
-          setMessage("Вы успешно зарегистрировались!");
-          history.push("/sign-in");
-        }
+  React.useEffect(() => {
+    if (loggedIn)  {
+      Promise.all([api.getCards(), api.getUserInfo()])
+      .then(([cardsObj, userData]) => {
+        setCards(cardsObj)
+        setCurrentUser(userData)
       })
-      .catch((err) => {
-        setIsInfoTooltipOpen(true);
-        setTooltipImage(authFail);
-        setMessage("Что-то пошло не так! Попробуйте еще раз");
-        if (err === "Ошибка: 400")
-          console.log(" некорректно заполнено одно из полей ");
-      });
+      .catch((err) => console.log(err))
+    }
+  }, [loggedIn])
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some(id => id === currentUser._id)
+    api.changeLikeCardStatus(card._id, !isLiked)
+    .then((newCard) => {
+      setCards(state => state.map(c => c._id === card._id ? newCard : c))
+    })
+    .catch((err) => console.log(err))
   }
 
-  function onLogin(email, password) {
-    auth
-      .authorize(email, password)
-      .then((res) => {
-        if (res.token) {
-          localStorage.setItem("token", res.token);
-          setLoggedIn(true);
-          setEmail(email);
-          history.push("/");
-        }
-      })
-      .catch((err) => {
-        setIsInfoTooltipOpen(true);
-        setTooltipImage(authFail);
-        setMessage("Что-то пошло не так! Попробуйте ещё раз.");
-        if (err === "Ошибка: 400") {
-          console.log("не передано одно из полей");
-        } else if (err === "Ошибка: 401") {
-          console.log("Пользователь с данным email не найден");
-        }
-      });
+  function handleCardDeleteSubmit(e) {
+    e.preventDefault()
+    api.deleteCard(cardToDelete._id)
+    .then(() => {
+      setCards(state => state.filter(c => c._id !== cardToDelete._id))
+      closeAllPopups()
+    })
+    .catch((err) => console.log(err))
   }
-
-  function onSignOut() {
-    localStorage.removeItem("token");
-    setLoggedIn(false);
-    setEmail("");
-    history.push("/sign-in");
-  }
-
+  
   function handleEditProfileClick() {
-    setEditProfile(true);
-  }
-
-  function handleEditAvatarClick() {
-    setEditAvatar(true);
+    setEditProfilePopupOpen(true)
   }
 
   function handleAddPlaceClick() {
-    setAddCard(true);
+    setAddPlacePopupOpen(true)
   }
 
-  function handleDeleteClick(card) {
-    setModalWithDelete(true);
-    setDeletedCard(card);
+  function handleEditAvatarClick() {
+    setEditAvatarPopupOpen(true)
   }
 
   function handleCardClick(card) {
-    setSelectedCard(card);
-    setModalImage(true);
+    setSelectedCard(card)
   }
 
-  function closeAllModals() {
-    setEditProfile(false);
-    setEditAvatar(false);
-    setAddCard(false);
-    setModalImage(false);
-    setModalWithDelete(false);
-    setDeletedCard(null);
-    setIsInfoTooltipOpen(false);
+  function closeAllPopups() {
+    setEditProfilePopupOpen(false)
+    setAddPlacePopupOpen(false)
+    setEditAvatarPopupOpen(false)
+    setConfirmationPopupOpen(false)
+    setInfoTooltipOpen(false)
+    setSelectedCard({})
   }
 
-  useEffect(() => {
+  function handleUpdateUser (inputValues) {
+    api.setUserInfo(inputValues)
+    .then((userData) => {
+      setCurrentUser(userData)
+      closeAllPopups()
+    })
+    .catch((err) => console.log(`Ошибка - ${err}`))
+  }
+
+  function handleUpdateAvatar (inputValue) {
+    api.setUserAvatar(inputValue)
+    .then(data => {
+      setCurrentUser(data)
+      closeAllPopups()
+    })
+    .catch(err => console.log(err))
+  }
+
+  function handleAddPlaceSubmit (place) {
+    api.loadCard(place)
+    .then(data => {
+      setCards([data, ...cards])
+      closeAllPopups()
+    })
+    .catch(err => console.log(err))
+  }
+
+  function handleCardDelete (card) {
+    setConfirmationPopupOpen(true)
+    setCardToDelete(card)
+  }
+
+  const handleLogin = (email, password) => {
+    auth.login(email, password)
+      .then((data) => {
+        localStorage.setItem('jwt', data.token)
+        setEmail(email)
+        setLoggedIn(true)
+        history.push('/')
+      })
+      .catch(err => {
+        console.log(`Ошибка - ${err}`)
+        setMessage({
+          text: 'Что-то пошло не так! Попробуйте ещё раз.',
+          image: decline
+        })
+        setInfoTooltipOpen(true)
+      })
+  }
   
-    Promise.all([api.getInitialCards(), api.getUserInfo()])
-      .then(([cards, userData]) => {
-        setCurrentUser(userData);
-        setCards(cards);
-        // console.log(userData);
-        // console.log(cards);
-        
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i === currentUser._id);
-    if (!isLiked) {
-      api
-        .likeCard(card._id)
-        .then((newCard) => {
-          const newCards = cards.map((c) => (c._id === card._id ? newCard : c));
-          setCards(newCards);
+  const handleRegister = (email, password) => {
+    auth.register(email, password)
+      .then((data) => {
+        if (data) {
+          localStorage.setItem('jwt', data.jwt)
+          setEmail(data.email)
+        }
+        history.push('/signin')
+        setMessage({
+          text: 'Вы успешно зарегистрировались!',
+          image: accept
         })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      api
-        .dislikeCard(card._id)
-        .then((newCard) => {
-          const newCards = cards.map((c) => (c._id === card._id ? newCard : c));
-          setCards(newCards);
+        setInfoTooltipOpen(true)
+      })
+      .catch(err => {
+        console.log(`Ошибка - ${err}`)
+        setMessage({
+          text: 'Что-то пошло не так! Попробуйте ещё раз.',
+          image: decline
         })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }
-
-  function handleCardDelete() {
-    setIsLoading(true);
-    api
-      .deleteCard(deletedCard._id)
-      .then(() => {
-        const newCards = cards.filter((c) => c._id !== deletedCard._id);
-        setCards(newCards);
-        closeAllModals();
+        setInfoTooltipOpen(true)
       })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
   }
 
-  function handleUpdateUser(items) {
-    setIsLoading(true);
-    api
-      .setUserInfo(items)
-      .then((res) => {
-        setCurrentUser(res);
-        closeAllModals();
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  const handleLogout = () => {
+    localStorage.removeItem('jwt')
+    setEmail('')
+    setLoggedIn(false)
+    history.push('/signin')
   }
-
-  function handleUpdateAvatar(item) {
-    setIsLoading(true);
-    api
-      .setUserAvatar(item)
-      .then((res) => {
-        setCurrentUser(res);
-        closeAllModals();
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
-
-  function handleAddPlaceSubmit(newCard) {
-    setIsLoading(true);
-    api
-      .postNewCard(newCard)
-      .then((newCard) => setCards([newCard, ...cards]))
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setIsLoading(false);
-        closeAllModals();
-      });
-  }
-
-  function handlerEscClose(evt) {
-    if (evt.key === "Escape") {
-      closeAllModals();
-    }
-  }
-
-  function closeByOverlay(evt) {
-    if (evt.target.classList.contains("modal")) {
-      closeAllModals();
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener("keydown", handlerEscClose);
-    document.addEventListener("click", closeByOverlay);
-    return () => {
-      document.removeEventListener("keydown", handlerEscClose);
-      document.removeEventListener("click", closeByOverlay);
-    };
-  });
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <Header loggedIn={loggedIn} userEmail={email} onSignOut={onSignOut} />
-        <Switch>
-          <ProtectedRoute exact path="/" loggedIn={loggedIn}>
-            <Main
-              cards={cards}
-              onEditAvatar={handleEditAvatarClick}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onCardClick={handleCardClick}
-              onCardLike={handleCardLike}
-              onCardDelete={handleDeleteClick}
-            />
-          </ProtectedRoute>
-          <Route path="/sign-in">
-            <Login onLogin={onLogin} />
-          </Route>
-          <Route path="/sign-up">
-            <Register onRegister={onRegister} />
-          </Route>
-          <Route>
-            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-          </Route>
-        </Switch>
-        {loggedIn && <Footer />}
-        <section className="modals">
-          <EditProfileModal
-            isOpen={isEditProfileModalOpen}
-            isClose={closeAllModals}
-            onUpdateUser={handleUpdateUser}
-            isLoading={isLoading}
-          ></EditProfileModal>
-          <AddPlaceModal
-            isOpen={isAddPlaceModalOpen}
-            isClose={closeAllModals}
-            postNewCard={handleAddPlaceSubmit}
-            isLoading={isLoading}
-          ></AddPlaceModal>
-          <EditAvatarModal
-            isOpen={isEditAvatarModalOpen}
-            isClose={closeAllModals}
-            onUpdateAvatar={handleUpdateAvatar}
-            isLoading={isLoading}
-          ></EditAvatarModal>
-          <ModalWithDelete
-            isOpen={isModalWithDeleteOpen}
-            isClose={closeAllModals}
-            onDelete={handleCardDelete}
-            card={deletedCard}
-            isLoading={isLoading}
+    <div className="page">
+      <div className="page__container">
+        <CurrentUserContext.Provider value = {currentUser}>
+          <Header 
+            loggedIn = {loggedIn}
+            email = {email}
+            handleLogout = {handleLogout}
           />
-          <ModalImage
-            isOpen={isModalImageOpen}
-            onClose={closeAllModals}
-            card={selectedCard}
+          <Switch>
+            <Route path="/signup">
+              <Register 
+                handleRegister = {handleRegister}
+              />
+            </Route>
+            <Route path="/signin">
+              <Login 
+                handleLogin = {handleLogin}
+              />
+            </Route>
+                        
+            <ProtectedRoute 
+              exact path="/"
+              loggedIn = {loggedIn} 
+              component = {Main} 
+              onEditProfile = {handleEditProfileClick}
+              onAddPlace = {handleAddPlaceClick}
+              onEditAvatar = {handleEditAvatarClick}
+              onCardClick = {handleCardClick}
+              cards = {cards}
+              onCardLike = {handleCardLike}
+              onCardDelete = {handleCardDelete}
+            /> 
+
+            <Route path="*">
+              <Login 
+                handleLogin = {handleLogin}
+              />
+            </Route>
+          </Switch>
+          <Footer />
+          
+          <EditProfilePopup 
+            isOpen = {isEditProfilePopupOpen} 
+            onClose = {closeAllPopups}
+            onUpdateUser = {handleUpdateUser} 
           />
-          <InfoTooltip
-            isOpen={isInfoTooltipOpen}
-            onClose={closeAllModals}
-            image={tooltipImage}
-            message={message}
-            loggedIn={loggedIn}
+
+          <EditAvatarPopup 
+            isOpen = {isEditAvatarPopupOpen} 
+            onClose = {closeAllPopups} 
+            onUpdateAvatar = {handleUpdateAvatar}
           />
-        </section>
+
+          <AddPlacePopup 
+            isOpen = {isAddPlacePopupOpen}
+            onClose = {closeAllPopups}
+            onAddPlace = {handleAddPlaceSubmit}
+          />
+
+          <ConfirmationPopup 
+            isOpen = {isConfirmationPopupOpen}
+            onClose = {closeAllPopups}
+            onSubmit = {handleCardDeleteSubmit}
+          />
+          
+          <ImagePopup 
+            card={selectedCard} 
+            onClose={closeAllPopups}
+          />
+
+          <InfoTooltip 
+            isOpen = {isInfoTooltipOpen}
+            onClose = {closeAllPopups}
+            message = {message}
+          />
+        </CurrentUserContext.Provider>        
       </div>
-    </CurrentUserContext.Provider>
+    </div>
   );
 }
 

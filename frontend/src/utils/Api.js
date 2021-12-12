@@ -1,92 +1,118 @@
-export default class Api {
+class Api {
   constructor(config) {
-    this.url = config.url;
-    this.headers = config.headers;
+    this._url = config.url
+    this._headers = config.headers
   }
 
-  _getResponseData(res) {
+  _handleServerResponse(res) {
     if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(new Error(`Ошибка: ${res.status}`));
+      return res.json()
+    } else return Promise.reject(`Произошла ошибка - ${res.status}`)
   }
 
-  getInitialCards() {
-    return fetch(`${this.url}/cards`, {
-      headers: this.headers,
-    }).then((res) => this._getResponseData(res));
+  getCards() {
+    return fetch(`${this._url}cards`, {
+      method: 'GET',
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
+    }).then(this._handleServerResponse)
   }
 
   getUserInfo() {
-    return fetch(`${this.url}/users/me`, {
-      method: "GET",
-      headers: this.headers,
-    }).then((res) => this._getResponseData(res));
-  }
-
-  postNewCard(data) {
-    return fetch(`${this.url}/cards`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(data),
-    }).then((res) => this._getResponseData(res));
+    return fetch(`${this._url}users/me`, {
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
+      method: 'GET'
+    }).then(this._handleServerResponse)
   }
 
   setUserInfo(data) {
-    return fetch(`${this.url}/users/me`, {
-      method: "PATCH",
-      headers: this.headers,
+    return fetch(`${this._url}users/me`, {
+      method: 'PATCH',
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
       body: JSON.stringify({
         name: data.name,
-        about: data.about,
-      }),
-    }).then((res) => this._getResponseData(res));
+        about: data.about
+      })
+    }).then(this._handleServerResponse)
   }
+
+  loadCard(data) {
+    return fetch(`${this._url}cards`, {
+      method: 'POST',
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
+      body: JSON.stringify({
+        name: data.name,
+        link: data.link
+      })
+    }).then(this._handleServerResponse)
+  }
+  
+  deleteCard(id) {
+    return fetch(`${this._url}cards/${id}`, {
+      method: "DELETE",
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
+    }).then(this._handleServerResponse);
+  }
+
+  /*putLike(id) {
+    return fetch(`${this._url}cards/likes/${id}`, {
+      method: "PUT",
+      headers: this._headers,
+    }).then(this._handleServerResponse);
+  }
+
+  deleteLike(id) {
+    return fetch(`${this._url}cards/likes/${id}`, {
+      method: "DELETE",
+      headers: this._headers,
+    }).then(this._handleServerResponse);
+  }*/
 
   setUserAvatar(data) {
-    return fetch(`${this.url}/users/me/avatar`, {
+    return fetch(`${this._url}users/me/avatar`, {
       method: "PATCH",
-      headers: this.headers,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      },
       body: JSON.stringify({
-        avatar: data.avatar,
-      }),
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+        avatar: data.avatar
+      })
+    }).then(this._handleServerResponse);
   }
 
-  deleteCard(cardID) {
-    return fetch(`${this.url}/cards/${cardID}`, {
-      method: "DELETE",
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
-  }
-
-  likeCard(cardId) {
-    return fetch(`${this.url}/cards/${cardId}/likes`, {
-      method: "PUT",
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
-  }
-
-  dislikeCard(cardId) {
-    return fetch(`${this.url}/cards/${cardId}/likes`, {
-      method: "DELETE",
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+  changeLikeCardStatus(id, owner) {
+    const meth = owner ? "PUT" : "DELETE"
+    return fetch(`${this._url}cards/${id}/likes`, {
+      method: meth,
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      }
+    }).then(this._handleServerResponse);
   }
 }
 
-export const api = new Api({
-  url: "https://api.mesto.aysad26.nomoredomains.rocks",
+const api = new Api ({
+  url: 'https://api.mesto.aysad26.nomoredomains.rocks/',
   headers: {
-     authorization: `Bearer ${localStorage.getItem("token")}`,
-    "Content-Type": "application/json",
-  },
-});
+    Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    "content-type": "application/json"
+  }
+})
+
+export default api

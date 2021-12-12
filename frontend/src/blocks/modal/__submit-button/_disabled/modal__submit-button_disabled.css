@@ -1,8 +1,0 @@
-.modal__submit-button_disabled {
-    background-color: #FFFFFF;
-    border: 1px solid #000000;
-    color: #000;
-    opacity: 0.2;
-    cursor: default;
-    pointer-events: none;
-}

@@ -1,37 +1,39 @@
-export const BASE_URL = "https://api.mesto.aysad26.nomoredomains.rocks";
+const BASE_URL = 'https://api.mesto.aysad26.nomoredomains.rocks'
 
-const checkResponse = (res) =>
-  res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
-
+const handleResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка - ${res.status} - ${res.statusText}`)
+  
 export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email, password }),
-  }).then(checkResponse);
-};
+    body: JSON.stringify({email, password})
+  })
+  .then(handleResponse)
+}
 
-export const authorize = (email, password) => {
-  return fetch(`${BASE_URL}/signin`, {
-    method: "POST",
+export const login = (email, password) => {
+  return fetch (`${BASE_URL}/signin`, {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email, password }),
-  }).then(checkResponse);
-};
+    body: JSON.stringify({email, password})
+  })
+   .then(handleResponse)
+}
 
 export const checkToken = (token) => {
-  return fetch(`${BASE_URL}/users/me`, {
-    method: "GET",
+  return fetch (`${BASE_URL}/users/me`, {
+    method: 'GET',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  }).then(checkResponse);
-};
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+   .then(handleResponse)
+}

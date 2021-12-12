@@ -1,32 +1,11 @@
-@import url('./__avatar/profile__avatar.css');
-@import url('./__edit-button/profile__edit-button.css');
-@import url('./__add-button/profile__add-button.css');
-@import url('./__info/profile__info.css');
-@import url('./__name/profile__name.css');
-@import url('./__job/profile__job.css');
-@import url('./__image/profile__image.css');
-@import url('./__avatar-edit/profile__avatar-edit.css');
-
-
 .profile {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 40px;
 }
 
-@media screen and (max-width:767px) {
-    .profile {
-        flex-direction: column;
-        margin: 0 auto;
-        max-width: 350px;
-    }
-}
-
-
-
-@media screen and (max-width:425px) {
-    .profile {
-        max-width: 282px;
-        margin: 0;
-    }
+@media screen and (max-width: 820px){
+  .profile {
+    flex-direction: column;
+  }
 }

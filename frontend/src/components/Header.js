@@ -1,37 +1,41 @@
-import React from "react";
-import logo from "../images/logo.png";
-import { Link, Route } from "react-router-dom";
+import React from 'react'
+import logo from '../images/logo-vect.svg'
+import {Link, useLocation} from 'react-router-dom'
 
-function Header({ loggedIn, userEmail, onSignOut }) {
+function Header(props) {
+  const location = useLocation()
+
   return (
-    <header className="header page__header section">
-      <img src={logo} alt="Логотип" className="header__logo" />
-      <div className="header__section">
-        {loggedIn && (
-          <Route exact path="/">
-            <p className="header__email">{userEmail}</p>
-            <Link
-              to="/sign-in"
-              className="header__button-logout"
-              onClick={onSignOut}
-            >
-              Выйти
-            </Link>
-          </Route>
-        )}
-        <Route path="/sign-in">
-          <Link to="/sign-up" className="header__link">
-            Регистрация
-          </Link>
-        </Route>
-        <Route path="/sign-up">
-          <Link to="/sign-in" className="header__link">
-            Вход
-          </Link>
-        </Route>
-      </div>
+    <header className="header page__section">
+      <img className="header__logo" src={logo} alt="Место Россия" />
+      <div className="header__link-container">
+        {props.loggedIn && 
+          (
+            <>
+              <p className="header__user-email">{props.email}</p>
+              <button className="header__logout" onClick={props.handleLogout}>Выйти</button>
+            </>
+          )
+        }
+        {!props.loggedIn && 
+          ( 
+            <>
+              {location.pathname === '/signin' && 
+                (
+                  <Link to='/signup' className="header__link">Регистрация</Link>
+                )
+              }
+              {location.pathname === '/signup' && 
+                (
+                  <Link to='/signin' className="header__link">Войти</Link>
+                )
+              }
+            </>
+          )
+        }
+      </div> 
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header

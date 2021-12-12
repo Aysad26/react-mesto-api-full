@@ -1,21 +1,30 @@
-import React from 'react'
+import '../index.css';
 
 function PopupWithForm(props) {
   return (
-    <div className= {`popup popup-${props.name} ${props.isOpen ? 'popup_is-opened' : ''}`}>
-      <div className="popup__container">
-        <h2 className="popup__title">{props.title}</h2>
-        
-        <form className="form" name={`${props.name}-form`} onSubmit = {props.onSubmit} >
-          <fieldset className="form__fieldset">
-            {props.children}
-            <button className="button form__save" type="submit" aria-label="сохранить">{props.buttonLabel}</button>
-          </fieldset>
-        </form>
-        <button className="button popup__close" type="button" aria-label="закрыть" onClick={props.onClose}></button>
-      </div>
+    <section className={`popup popup_type_${props.name} ${props.isOpen ? "popup_opened":""}`}>
+    <div className="popup__window">
+      <button 
+        type="button" 
+        className="button button_type_close"  
+        onClick={props.onClose} 
+      />
+      <h2 className="popup__heading">{props.title}</h2>
+      <form 
+        className="form" 
+        name={props.name} 
+        onSubmit={props.onSubmit}
+        method="POST"
+      > 
+        {props.children}
+        <button className="button button_type_submit" type="submit" >
+        {props.submitText}
+        </button>
+      </form>
     </div>
-  )
+    <div className="popup__overlay popup__overlay_edit" onClick={props.onClose} />
+  </section>
+  );
 }
 
-export default PopupWithForm
+export default PopupWithForm;

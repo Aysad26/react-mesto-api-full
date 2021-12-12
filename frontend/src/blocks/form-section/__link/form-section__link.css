@@ -1,0 +1,23 @@
+.form-section__link {
+  text-decoration: none;
+  margin: 0 0 0 3px;
+  padding: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #FFFFFF;
+  transition: opacity 0.2s ease-in;
+}
+
+.form-section__link:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 767px) {
+  .form-section__paragraph {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}

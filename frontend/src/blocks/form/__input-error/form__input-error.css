@@ -1,7 +1,11 @@
-.form__input-error {
-  display: none;
+.form_input-error {
+  opacity: 0;
+  font-weight: normal;
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 15px;
   color: #FF0000;
-  padding-top: 5px;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  transition: opacity 0.3s;
 }

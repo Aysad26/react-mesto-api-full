@@ -1,40 +1,61 @@
-import React from 'react'
-import SignForm from './SignForm'
+import React from 'react';
+import { Link } from 'react-router-dom'; 
 
-const Register = ({handleRegister}) => {
-  const [data, setData] = React.useState({
+function Register({ onRegister }) {
+
+  const [inputValue, setInputValue] = React.useState({
     email: '',
     password: ''
-  })
-
-  const handleChange = (e) => {
-    const {name, value} = e.target
-    setData({
-      ...data,
-      [name]: value
-    })
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const {email, password} = data
-    handleRegister(email, password)
-  }
+  });
   
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  }
+
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const { email, password } = inputValue;
+    onRegister(email, password);
+  }
+
   return (
-    <SignForm 
-      title = {'Регистрация'}
-      buttonLabel = {'Зарегистрироваться'}
-      active = {'sign__text_active'}
-      onSubmit = {handleSubmit}
-      children = {
-        <>
-          <input className="sign__input" type="email" value={data.email} name="email" onChange={handleChange} placeholder="Email" required minLength="2" maxLength="40"></input>
-          <input className="sign__input" type="password" value={data.password} name="password" onChange={handleChange} placeholder="Пароль" required minLength="2" maxLength="40"></input>
-        </>
-      }
-    />
-  )
+    <div className="main">
+      <div className="form-section">
+        <h2 className="form-section__heading">Регистрация</h2>
+        <form className="form" name="profile-form" onSubmit={handleSubmit}>
+          <fieldset className="form__input-container">
+            <input 
+              type="email" 
+              className="form__item form__item_dark form__item_type_email" 
+              onChange={handleInputChange} 
+              name="email" 
+              placeholder="Email" 
+              value={inputValue.email}
+              autoComplete="off" 
+              required 
+            />
+            <input 
+              type="password" 
+              className="form__item form__item_dark form__item_type_password"
+              onChange={handleInputChange}  
+              name="password" 
+              placeholder="Пароль" 
+              autoComplete="off" 
+              value={inputValue.password}
+              required 
+            />
+          </fieldset>
+          <button className="button button_type_submit button_theme_dark" type="submit">Зарегистрироваться</button>
+          <p className="form-section__paragraph">Уже зарегистрированы? <Link to="/sign-in" className="form-section__link">Войти</Link></p>
+        </form>
+      </div>  
+    </div>
+  );
 }
 
-export default Register
+export default Register;

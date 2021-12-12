@@ -1,0 +1,21 @@
+.form__item_dark {
+  border: 0;
+  width: 100%;
+  height: 24px;
+  box-sizing: border-box;
+  border-bottom: 2px solid rgb(255, 255, 255);
+  padding: 13px 0 13px 0;
+  font-size: 14px;
+  line-height: 17px;
+  background-color: #ffffff00;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.form__item_dark:last-of-type {
+  margin-bottom: 173px;
+}
+
+.form__item_dark:focus {
+  outline: none;
+}

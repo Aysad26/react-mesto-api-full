@@ -20,7 +20,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "ghdeploy": "gh-pages -d build",
-    "deploy": "npm run build && scp -r ./build/* aysad26@62.84.113.198:/home/aysad26/mesto-frontend"
+    "deploy": "npm run build && scp -r ./build/* aysad26@51.250.11.18:/home/aysad26/mesto-frontend"
   },
   "eslintConfig": {
     "extends": [

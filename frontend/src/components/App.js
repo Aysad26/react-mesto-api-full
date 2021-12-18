@@ -131,7 +131,7 @@ const App = () => {
   }
 
   function handleAddPlaceSubmit (place) {
-    api.loadCard(place)
+    api.addCard(place)
     .then(data => {
       setCards([data, ...cards])
       closeAllPopups()

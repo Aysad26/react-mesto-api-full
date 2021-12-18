@@ -1,63 +1,59 @@
 const mongoose = require('mongoose');
-const { default: validator } = require('validator');
-const bcrypt = require('bcrypt');
-const UnauthorizedError = require('../errors/unauth-err');
-
-const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
+const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: false,
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: false,
     default: 'Исследователь',
   },
   avatar: {
-    required: false,
     type: String,
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return regex.test(v);
+        return validator.isURL(v, { require_protocol: true });
       },
-      message: 'Не верно указана ссылка на изображение.',
+      message: 'Введите корректный URL',
     },
-    default: 'https://media.wired.com/photos/5c86f3dd67bf5c2d3c382474/4:3/w_2400,h_1800,c_limit/TBL-RTX6HE9J-(1).jpg',
   },
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator(v) {
         return validator.isEmail(v);
       },
+      message: 'Введите корректный email',
     },
-    unique: true,
   },
   password: {
-    required: true,
     type: String,
+    required: true,
     select: false,
   },
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+// eslint-disable-next-line func-names
+userSchema.statics.findByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+        return Promise.reject(new Error('Неправильная почта или пароль'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+            return Promise.reject(new Error('Неправильная почта или пароль'));
           }
           return user;
         });

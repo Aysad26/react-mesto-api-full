@@ -1,0 +1,9 @@
+.cards__item {
+  max-width: 282px;
+  background-color: #fff;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: auto 72px;
+  grid-template-rows: auto auto;
+  position: relative;
+}

@@ -1,11 +1,12 @@
 .footer {
-  width: 100%;
-  margin: 0 auto;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.22;
+  color: #545454;
 }
 
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 618px){
   .footer {
-    width: calc(100% - 2*19px);
+    font-size: 14px;
   }
 }
-

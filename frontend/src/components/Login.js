@@ -1,61 +1,40 @@
-import React from 'react';
+import React from 'react'
+import SignForm from './SignForm'
 
-function Login({ onLogin }) {
+const Login = ({handleLogin}) => {
+  const [data, setData] = React.useState({
+    email: '',
+    password: ''
+  })
 
-  const [inputValue, setInputValue] = React.useState({ 
-    email: '', 
-    password: '' 
-  });
-
-  function handleInputChange(e) {
-    const { name, value } = e.target;
-    setInputValue({
-      ...inputValue,
-      [name]: value,
-    });
+  const handleChange = (e) => {
+    const {name, value} = e.target
+    setData({
+      ...data,
+      [name]: value
+    })
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    const { email, password } = inputValue;
-    if (!email || !password) {
-      return;
-    }
-    onLogin(email, password);
+    const {email, password} = data
+    handleLogin(email, password)
   }
-
+  
   return (
-    <div className="main">
-      <div className="form-section">
-        <h2 className="form-section__heading">Вход</h2>
-        <form className="form" name="profile-form" onSubmit={handleSubmit}>
-          <fieldset className="form__input-container">
-            <input 
-              type="email" 
-              className="form__item form__item_dark form__item_type_email" 
-              onChange={handleInputChange} 
-              name="email" 
-              value={inputValue.email}
-              placeholder="Email" 
-              autoComplete="off" 
-              required 
-            />
-            <input 
-              type="password" 
-              className="form__item form__item_dark form__item_type_password"
-              onChange={handleInputChange}  
-              name="password" 
-              value={inputValue.password}
-              placeholder="Пароль" 
-              autoComplete="off" 
-              required 
-            />
-          </fieldset>
-          <button className="button button_type_submit button_theme_dark" type="submit">Войти</button>
-        </form>
-      </div>  
-    </div>
-  );
+    <SignForm 
+      title = {'Вход'}
+      buttonLabel = {'Войти'}
+      active = ''
+      onSubmit = {handleSubmit}
+      children = {
+        <>
+          <input className="sign__input" type="email" value={data.email} name="email" onChange={handleChange} placeholder="Email" required minLength="2" maxLength="40"></input>
+          <input className="sign__input" type="password" value={data.password} name="password" onChange={handleChange} placeholder="Пароль" required minLength="2" maxLength="40"></input>
+        </>
+      }
+    />
+  )
 }
 
-export default Login;
+export default Login

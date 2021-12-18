@@ -1,14 +1,17 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const routerCards = require('./routes/cards');
-const routerUsers = require('./routes/users');
+const helmet = require('helmet');
+const { errors, celebrate, Joi } = require('celebrate');
+
+const usersRouter = require('./routes/users');
+const cardsRouter = require('./routes/cards');
+
 const NotFoundError = require('./errors/not-found-err');
-const urlValidator = require('./constants');
+
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+const urlvalidator = require('./middlewares/url-validation');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 
@@ -16,11 +19,19 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+});
 
-app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(helmet());
+
 app.use(cors);
+
+app.use('/', express.json());
+
 app.use(requestLogger);
 
 // эмуляция падения серевера
@@ -30,42 +41,53 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
   }),
-}), login);
-
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(urlValidator),
-    about: Joi.string().min(2).max(30),
+  login,
+);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().custom(urlvalidator, 'custom URL validator'),
+    }),
   }),
-}), createUser);
-
+  createUser,
+);
 app.use(auth);
-app.use('/', routerUsers);
-app.use('/', routerCards);
+app.use('/', usersRouter);
+app.use('/', cardsRouter);
 
-app.use(() => {
-  throw new NotFoundError('Введён несуществующий адрес');
+app.get('/signout', (req, res) => {
+  res.status(200).clearCookie('jwt').send({ message: 'Выход' });
+});
+
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
 
 app.use(errorLogger);
 
 app.use(errors());
-
-app.use((err, req, res, next) => {//eslint-disable-line
+// Обработчик ошибок
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
     message: statusCode === 500
       ? 'На сервере произошла ошибка'
       : message,
   });
+  next();
 });
 
 app.listen(PORT, () => {

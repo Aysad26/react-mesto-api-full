@@ -1,0 +1,13 @@
+.sign__input {
+  border: 0;
+  border-bottom: 2px solid #CCC;
+  background-color: transparent;
+  padding: 0;
+  width: 100%;
+  color: #CCC;
+  padding-bottom: 13px;
+}
+
+.sign__input:nth-child(2) {
+  margin-top: 30px;
+}
